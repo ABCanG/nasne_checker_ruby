@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require 'nasne_checker'
+require 'optparse'
+
+begin
+  option = {}
+  opt_parser = OptionParser.new do |opt|
+    opt.version = NasneChecker::VERSION
+    opt.on('--nasne=host',        'Nasne host (required)') {|v| option[:nasne] = v}
+    opt.on('--slack=url',         'Slack webhook url (required)') {|v| option[:slack] = v}
+    opt.on('--cron=format',       'Cron format (optional)') {|v| option[:cron] = v}
+
+    opt.on_tail(
+      '',
+      'Examples:',
+      '',
+      '$ nasne_checker \\',
+      '  --nasne 192.168.10.10 \\',
+      '  --slack https://hooks.slack.com/services/XXX/XXX/XXXXX \\',
+      '  --cron "00 20 * * 1,3,5"'
+    )
+
+    opt.parse!(ARGV)
+  end
+
+  if !option[:nasne] || !option[:slack]
+    STDERR.puts '"--nasne" option and "--slack" option are required.'
+    STDERR.puts ''
+    puts opt_parser.help
+    exit 1
+  end
+
+  NasneChecker.run(option)
+
+rescue OptionParser::ParseError, Faraday::Error::ClientError => e
+  STDERR.puts e.message
+  exit 1
+end
