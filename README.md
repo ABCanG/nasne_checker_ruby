@@ -1,4 +1,4 @@
-nasne-checker
+nasne_checker
 ===
 [![Gem Version](https://badge.fury.io/rb/nasne_checker.svg)](https://badge.fury.io/rb/nasne_checker)
 
